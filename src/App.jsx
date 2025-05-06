@@ -11,8 +11,8 @@ function App() {
       <div className="relative min-h-screen bg-gradient-to-b from-gray-900 to-black text-white antialiased">
         <Routes>
           <Route path="/home" element={<LandingPage />} />
-          <Route path="/q" element={<QuotationMaker />} />
-          <Route path="/" element={<QuotationV2 />} />
+          <Route path="/" element={<QuotationMaker />} />
+          <Route path="/q" element={<QuotationV2 />} />
         </Routes>
       </div>
     </Router>
