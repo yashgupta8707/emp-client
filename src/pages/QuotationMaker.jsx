@@ -35,7 +35,7 @@ const QuotationMakerContent = () => {
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           {/* Business Details */}
-          <BusinessDetailsForm />
+          {/* <BusinessDetailsForm /> */}
 
           {/* Customer Details */}
           <CustomerDetailsForm />

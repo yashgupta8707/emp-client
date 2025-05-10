@@ -64,7 +64,7 @@ const Header = () => {
               to="/quotation"
               className={`px-3 py-2 rounded-md text-sm font-medium flex items-center ${
                 isActive('/') || isActive('/quotation')
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-orange-600 text-white'
                   : 'text-gray-300 hover:bg-gray-700 hover:text-white'
               }`}
             >
@@ -75,7 +75,7 @@ const Header = () => {
               to="/parties"
               className={`px-3 py-2 rounded-md text-sm font-medium flex items-center ${
                 isActive('/parties')
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-orange-600 text-white'
                   : 'text-gray-300 hover:bg-gray-700 hover:text-white'
               }`}
             >
@@ -87,7 +87,7 @@ const Header = () => {
                 to="/users"
                 className={`px-3 py-2 rounded-md text-sm font-medium flex items-center ${
                   isActive('/users')
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-orange-600 text-white'
                     : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                 }`}
               >

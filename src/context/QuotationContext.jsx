@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { calculateTotals } from '../utils/calculations';
 import { generateEstimateNumber } from '../utils/generators';
 import { componentDatabase } from '../data/componentDatabase';
+import { useParty } from './PartyContext';
 
 // Create context
 const QuotationContext = createContext();
@@ -11,6 +12,8 @@ export const useQuotation = () => useContext(QuotationContext);
 
 // Provider component
 export const QuotationProvider = ({ children }) => {
+  const { parties, addParty } = useParty();
+  
   // State for business details
   const [businessDetails, setBusinessDetails] = useState({
     companyName: 'Empress PC',
@@ -37,6 +40,9 @@ export const QuotationProvider = ({ children }) => {
   
   // State for print mode
   const [printMode, setPrintMode] = useState(false);
+  
+  // Added state for enhanced PDF mode
+  const [enhancedPdfMode, setEnhancedPdfMode] = useState(false);
   
   // State for saved quotations
   const [savedQuotations, setSavedQuotations] = useState(() => {
@@ -108,8 +114,42 @@ export const QuotationProvider = ({ children }) => {
     }));
   };
 
+  // Save customer to parties database if they don't exist
+  const autoSaveCustomer = () => {
+    // Only proceed if customer has name and phone
+    if (!customerDetails.name || !customerDetails.phone) {
+      return null;
+    }
+    
+    // Check if customer already exists
+    const existingCustomer = parties.find(p => 
+      p.type === 'customer' && 
+      (p.phone === customerDetails.phone || p.name.toLowerCase() === customerDetails.name.toLowerCase())
+    );
+    
+    // If not found, add to database
+    if (!existingCustomer) {
+      try {
+        return addParty({
+          name: customerDetails.name,
+          phone: customerDetails.phone,
+          address: customerDetails.address || '',
+          state: customerDetails.state || '09-Uttar Pradesh',
+          type: 'customer'
+        });
+      } catch (err) {
+        console.error('Failed to auto-save customer:', err);
+      }
+    }
+    
+    return null;
+  };
+
   // Save quotation
   const saveQuotation = () => {
+    // First try to auto-save customer if they don't exist
+    autoSaveCustomer();
+    
     const totals = calculateTotals(selectedItems);
     const quotationData = {
       id: generateEstimateNumber(),
@@ -143,6 +183,26 @@ export const QuotationProvider = ({ children }) => {
     }
     setExpandedCategories(newExpanded);
   };
+  
+  // Enter enhanced PDF mode
+  const showEnhancedPdf = () => {
+    setPrintMode(true);
+    setEnhancedPdfMode(true);
+  };
+  
+  // Exit PDF mode (handles both regular and enhanced)
+  const exitPdfMode = () => {
+    setPrintMode(false);
+    setEnhancedPdfMode(false);
+  };
+  
+  // Find quotations for a customer by name or phone
+  const findCustomerQuotations = (identifier) => {
+    return savedQuotations.filter(quote => 
+      quote.customerDetails.phone === identifier || 
+      quote.customerDetails.name.toLowerCase() === identifier.toLowerCase()
+    );
+  };
 
   useEffect(() => {
     // Initialize saved quotations from localStorage
@@ -168,6 +228,10 @@ export const QuotationProvider = ({ children }) => {
         setSearchQuery,
         printMode,
         setPrintMode,
+        enhancedPdfMode,
+        setEnhancedPdfMode,
+        showEnhancedPdf,
+        exitPdfMode,
         savedQuotations,
         setSavedQuotations,
         expandedCategories,
@@ -178,6 +242,8 @@ export const QuotationProvider = ({ children }) => {
         saveQuotation,
         loadQuotation,
         toggleCategory,
+        findCustomerQuotations,
+        autoSaveCustomer,
         totals,
       }}
     >
